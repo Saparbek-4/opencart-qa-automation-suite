@@ -1,0 +1,55 @@
+✅ Test Suite: Home Page UI and Functionality
+🔹 TC_001: Home Page Load and Layout Verification
+Checks:
+
+Page loads without errors
+
+Logo and store title are visible
+
+Image slider is present and working
+
+Footer section is visible
+
+🔹 TC_002: Header Functionality Verification
+Checks:
+
+Currency selector is visible
+
+Contact number is present
+
+"My Account", "Wish List", "Shopping Cart" links are present and clickable
+
+🔹 TC_003: Navigation Menu Verification
+Checks:
+
+Main menu contains categories like Desktops, Laptops, Tablets, etc.
+
+Menu items are clickable and lead to correct category pages
+
+🔹 TC_004: Search Functionality
+Steps:
+
+Enter a keyword (e.g., "iPhone") in the search bar and click search
+
+Expected Result: Redirects to search results with relevant products
+
+🔹 TC_005: Featured Products Section
+Checks:
+
+Products like MacBook, iPhone, etc., are visible
+
+Product info: image, name, price, and “Add to Cart” buttons are displayed
+
+🔹 TC_006: Add to Cart Functionality
+Steps:
+
+Click "Add to Cart" on a product
+
+Expected Result: Cart count and price in header update correctly
+
+🔹 TC_007: Footer Section and External Links
+Checks:
+
+Sections: Information, Customer Service, Extras, My Account
+
+Links (About Us, Contact Us, etc.) are working and navigate correctly

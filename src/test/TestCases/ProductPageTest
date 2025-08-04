@@ -1,0 +1,145 @@
+✅ Product Page – UI & Functionality Test Cases
+🧪 TC_001: Product Page Loads Successfully
+Objective: Ensure product detail page loads without error.
+Steps:
+
+Navigate to a product (e.g., Canon EOS 5D).
+
+Wait for the title and price to be visible.
+
+Expected Result:
+
+Title, price, and image are displayed.
+
+Breadcrumb is visible.
+
+No errors are shown.
+
+🧪 TC_002: Verify Product Information Display
+Objective: Ensure product metadata is displayed correctly.
+Checks:
+
+Title is correct (e.g., Canon EOS 5D)
+
+Price and tax info visible
+
+Product code, availability, brand
+
+Product image gallery loads
+
+🧪 TC_003: Dropdown Option Validation (Required Option)
+Applicable For: Products like Canon EOS 5D with required dropdowns.
+Steps:
+
+Do not select a value from dropdown.
+
+Click “Add to Cart”.
+
+Expected Result:
+
+Error message shown: “Please select an option.”
+
+🧪 TC_004: Successful Add to Cart with Option
+Objective: Ensure the product can be added to cart after selecting required options.
+Steps:
+
+Select “Red” from color dropdown.
+
+Click “Add to Cart”.
+
+Expected Result:
+
+Success alert appears: You have added Canon EOS 5D to your shopping cart!
+
+Cart item count updates.
+
+🧪 TC_005: Add to Cart Without Option (Should Fail)
+Steps:
+
+Click “Add to Cart” without choosing dropdown.
+
+Wait for error.
+
+Expected Result:
+
+Error message is shown.
+
+Product not added.
+
+🧪 TC_006: Add to Cart – Product With No Options (e.g. iMac)
+Objective: Validate adding a product without any options.
+Steps:
+
+Navigate to iMac or MacBook page.
+
+Click “Add to Cart”.
+
+Expected Result:
+
+Product added without dropdown.
+
+Cart count updated.
+
+🧪 TC_007: Deferred Stock Validation on Cart Page
+Objective: Ensure the system handles stock issues at cart stage, not during add-to-cart.
+
+Steps:
+
+Navigate to an out-of-stock product page (e.g., MacBook).
+
+Click “Add to Cart”.
+
+Go to cart page.
+
+Try to increase quantity to 2 and click Update.
+
+Expected Result:
+
+Product is added to cart (even if out of stock).
+
+Cart page displays warning:
+
+"Products marked with *** are not available in the desired quantity or not in stock!"
+
+Product is visually marked with ***.
+
+Test Type: Negative (but expected behavior)
+
+Severity: Minor (if validation logic is confirmed as deferred by design)
+
+🧪 TC_008: Review Form Validation
+Steps:
+
+Scroll to “Write a Review”.
+
+Leave “Name” empty and type review.
+
+Submit.
+
+Expected Result:
+
+Error: “Review Name must be between 3 and 25 characters!”
+
+🧪 TC_009: Submit Valid Review
+Steps:
+
+Fill “Name”, “Review” (min 3 chars), and select rating.
+
+Click Continue.
+
+Expected Result:
+
+Success or moderation message appears.
+
+🧪 TC_010: UI Element Visibility
+Checks:
+
+Product image is displayed
+
+"Add to Cart" button is present
+
+Price and tax fields are visible
+
+Dropdown rendered if applicable
+
+Review and description tabs are functional

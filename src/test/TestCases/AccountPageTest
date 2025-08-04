@@ -1,0 +1,64 @@
+✅ TC Group: My Account Page — Test Suite
+🧪 TC_001: My Account Page Loads Successfully
+Step: Log in and go to /index.php?route=account/account
+
+Check:
+
+Page heading is present
+
+Left sidebar and central links are visible
+
+🧪 TC_002: Verify All Account Links Are Visible
+Check: Assert that the following links are present:
+
+Edit Account
+
+Password
+
+Address Book
+
+Wish List
+
+Order History
+
+Downloads
+
+Reward Points
+
+Returns
+
+Transactions
+
+Newsletter
+
+Logout
+
+🧪 TC_003: Navigate to Edit Account Page
+Action: Click Edit Account
+
+Expected: Redirect to index.php?route=account/edit
+
+Validate: Form fields are visible (First Name, Last Name, Email, etc.)
+
+➡ Covered in EditAccountPageTest.java
+
+🧪 TC_004: Navigate to Wish List
+Action: Click Wish List
+
+Expected: Go to /index.php?route=account/wishlist
+
+Check: Items listed, remove buttons present
+
+➡ Covered in WishListPageTest.java
+
+🧪 TC_005: Navigate to Order History
+Check: /index.php?route=account/order
+
+Verify: List of past orders (or message if none)
+
+🧪 TC_006: Logout Functionality
+Action: Click Logout
+
+Expected: Redirect to account/logout
+
+Message: "You have been logged off your account."

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Parallel Checkout Test Suite"
+       parallel="tests"
+       thread-count="2"
+       preserve-order="false">
+
+    <!-- Chrome execution -->
+    <test name="Checkout Tests on Chrome">
+        <parameter name="browser" value="chrome"/>
+        <classes>
+            <class name="com.opencart.ui.tests.CheckoutTest">
+                <methods>
+                    <include name="testBillingDetailsRequiredFieldsValidation"/>
+                    <include name="testSubmitValidBillingAddress"/>
+                    <include name="testValidateDeliveryDetailsForm"/>
+                    <include name="testSubmitValidDeliveryAddress"/>
+                    <include name="testSelectDeliveryMethod"/>
+                    <include name="testTermsAndConditionsValidation"/>
+                    <include name="testSelectPaymentMethodAndAcceptTerms"/>
+                    <include name="testSelectCashOnDeliveryAndAcceptTerms"/>
+                    <include name="testConfirmOrder"/>
+                    <include name="testValidateFinalAmount"/>
+                    <include name="testPostOrderCartClearance"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+
+    <!-- Firefox execution -->
+    <test name="Checkout Tests on Firefox">
+        <parameter name="browser" value="firefox"/>
+        <classes>
+            <class name="com.opencart.ui.tests.CheckoutTest">
+                <methods>
+                    <include name="testBillingDetailsRequiredFieldsValidation"/>
+                    <include name="testSubmitValidBillingAddress"/>
+                    <include name="testValidateDeliveryDetailsForm"/>
+                    <include name="testSubmitValidDeliveryAddress"/>
+                    <include name="testSelectDeliveryMethod"/>
+                    <include name="testTermsAndConditionsValidation"/>
+                    <include name="testSelectPaymentMethodAndAcceptTerms"/>
+                    <include name="testSelectCashOnDeliveryAndAcceptTerms"/>
+                    <include name="testConfirmOrder"/>
+                    <include name="testValidateFinalAmount"/>
+                    <include name="testPostOrderCartClearance"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+
+<!--    <test name="Cart Tests">-->
+<!--        <classes>-->
+<!--            <class name="tests.CartTest">-->
+<!--                <methods>-->
+<!--                    <include name="validateEmptyCartMessage"/>-->
+<!--                    <include name="verifyProductInfoInCart"/>-->
+<!--                    <include name="verifyQuantityUpdate"/>-->
+<!--                    <include name="verifyProductRemovalBySettingQuantityToZero"/>-->
+<!--                    <include name="verifyProductRemovalViaDeleteButton"/>-->
+<!--                    <include name="verifyPriceCalculations"/>-->
+<!--                    <include name="verifyProceedToCheckout"/>-->
+<!--                </methods>-->
+<!--            </class>-->
+<!--        </classes>-->
+<!--    </test>-->
+
+<!--    <test name="Home page Tests">-->
+<!--        <classes>-->
+<!--            <class name="com.opencart.ui.tests.HomePageTest">-->
+<!--                <methods>-->
+<!--                    <include name="testHomePageLoadAndLayout"/>-->
+<!--                    <include name="testHeaderFunctionality"/>-->
+<!--                    <include name="testNavigationMenu"/>-->
+<!--                    <include name="testSearchFunctionality"/>-->
+<!--                    <include name="testFeaturedProducts"/>-->
+<!--                    <include name="testAddToCartFunctionality"/>-->
+<!--                    <include name="testFooterLinks"/>-->
+<!--                </methods>-->
+<!--            </class>-->
+<!--        </classes>-->
+<!--    </test>-->
+
+<!--    <test name="Product page Tests">-->
+<!--        <classes>-->
+<!--            <class name="tests.ProductPageTest">-->
+<!--                <methods>-->
+<!--                    <include name="validateProductPageLoadsSuccessfully"/>-->
+<!--                    <include name="validateProductInformationDisplay"/>-->
+<!--                    <include name="validateRequiredOptionValidation"/>-->
+<!--                    <include name="validateSuccessfulAddToCartWithOption"/>-->
+<!--                    <include name="validateAddToCartWithoutOption"/>-->
+<!--                    <include name="validateAddToCartNoOptions"/>-->
+<!--                    <include name="validateOutOfStockProduct"/>-->
+<!--                    <include name="validateReviewFormValidation"/>-->
+<!--                    <include name="validateSubmitValidReview"/>-->
+<!--                    <include name="validateUIElementVisibility"/>-->
+<!--                </methods>-->
+<!--            </class>-->
+<!--        </classes>-->
+<!--    </test>-->
+</suite>

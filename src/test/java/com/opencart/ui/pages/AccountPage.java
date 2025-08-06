@@ -30,17 +30,13 @@ public class AccountPage extends BasePage {
     private By logoutLink = By.linkText("Logout");
 
     // Alternative locators for different layouts
-    private By editAccountLinkAlt = By.xpath("//a[contains(@href, 'account/edit')]");
     private By passwordLinkAlt = By.xpath("//a[contains(@href, 'account/password')]");
     private By addressBookLinkAlt = By.xpath("//a[contains(@href, 'account/address')]");
-    private By wishListLinkAlt = By.xpath("//a[contains(@href, 'account/wishlist')]");
-    private By orderHistoryLinkAlt = By.xpath("//a[contains(@href, 'account/order')]");
     private By downloadsLinkAlt = By.xpath("//a[contains(@href, 'account/download')]");
     private By rewardPointsLinkAlt = By.xpath("//a[contains(@href, 'account/reward')]");
     private By returnsLinkAlt = By.xpath("//a[contains(@href, 'account/return')]");
     private By transactionsLinkAlt = By.xpath("//a[contains(@href, 'account/transaction')]");
     private By newsletterLinkAlt = By.xpath("//a[contains(@href, 'account/newsletter')]");
-    private By logoutLinkAlt = By.xpath("//a[contains(@href, 'account/logout')]");
 
     // Logout confirmation message
     private By logoutMessage = By.cssSelector("div#content p");
@@ -55,6 +51,7 @@ public class AccountPage extends BasePage {
      */
     public void navigateToAccountPage() {
         driver.get().navigate().to(ConfigReader.getProperty("baseUrl") + "index.php?route=account/account");
+        wait.get().waitForPageLoad();
         logger.info("Navigated to: {}", DriverFactory.getDriver().getCurrentUrl());
     }
 
@@ -144,7 +141,7 @@ public class AccountPage extends BasePage {
      * Check all account links visibility
      */
     public boolean isEditAccountLinkVisible() {
-        return isAccountLinkPresent(editAccountLink, editAccountLinkAlt, "Edit Account");
+        return isElementPresent(editAccountLink);
     }
 
     public boolean isPasswordLinkVisible() {
@@ -156,11 +153,11 @@ public class AccountPage extends BasePage {
     }
 
     public boolean isWishListLinkVisible() {
-        return isAccountLinkPresent(wishListLink, wishListLinkAlt, "Wish List");
+        return isElementPresent(wishListLink);
     }
 
     public boolean isOrderHistoryLinkVisible() {
-        return isAccountLinkPresent(orderHistoryLink, orderHistoryLinkAlt, "Order History");
+        return isElementPresent(orderHistoryLink);
     }
 
     public boolean isDownloadsLinkVisible() {
@@ -184,47 +181,26 @@ public class AccountPage extends BasePage {
     }
 
     public boolean isLogoutLinkVisible() {
-        return isAccountLinkPresent(logoutLink, logoutLinkAlt, "Logout");
-    }
-
-    /**
-     * Click on account links with fallback
-     */
-    private void clickAccountLink(By primaryLocator, By alternativeLocator, String linkName) {
-        logger.info("Attempting to click '{}' link", linkName);
-        try {
-            if (isElementPresent(primaryLocator)) {
-                click(primaryLocator);
-                logger.info("Successfully clicked '{}' using primary locator", linkName);
-            } else if (isElementPresent(alternativeLocator)) {
-                click(alternativeLocator);
-                logger.info("Successfully clicked '{}' using alternative locator", linkName);
-            } else {
-                throw new RuntimeException("'" + linkName + "' link not found");
-            }
-        } catch (Exception e) {
-            logger.error("Failed to click '{}' link", linkName, e);
-            throw new RuntimeException("Failed to click '" + linkName + "' link", e);
-        }
+        return isElementPresent(logoutLink);
     }
 
     /**
      * Navigation methods for each account section
      */
     public void clickEditAccount() {
-        clickAccountLink(editAccountLink, editAccountLinkAlt, "Edit Account");
+        click(editAccountLink);
     }
 
     public void clickWishList() {
-        clickAccountLink(wishListLink, wishListLinkAlt, "Wish List");
+        click(wishListLink);
     }
 
     public void clickOrderHistory() {
-        clickAccountLink(orderHistoryLink, orderHistoryLinkAlt, "Order History");
+        click(orderHistoryLink);
     }
 
     public void clickLogout() {
-        clickAccountLink(logoutLink, logoutLinkAlt, "Logout");
+        click(logoutLink);
     }
 
     /**

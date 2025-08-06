@@ -4,6 +4,7 @@ import com.opencart.ui.base.BaseTest;
 import com.opencart.ui.pages.AccountPage;
 import com.opencart.utils.DriverFactory;
 import com.opencart.utils.UserPoolManager;
+import com.opencart.utils.WaitUtils;
 import org.testng.annotations.BeforeMethod;
 import com.opencart.ui.pages.LoginPage;
 import org.testng.Assert;
@@ -13,19 +14,18 @@ public class LoginTest extends BaseTest {
 
     private LoginPage loginPage;
 
-    @BeforeMethod
-    public void setupTest() {
+    @Override
+    public void setupTestData() {
         loginPage = new LoginPage();
+        loginPage.navigateToLoginPage();
+        new WaitUtils().waitForPageLoad();
     }
-
 
     @Test(description = "Valid login should redirect to My Account page")
     public void testValidLogin() {
-        loginPage.navigateToLoginPage();
 
         String email = UserPoolManager.acquireUser();
         String password = getProp().getProperty("testUserPassword");
-
 
         loginPage.login(email, password);
 
@@ -35,7 +35,6 @@ public class LoginTest extends BaseTest {
 
     @Test(description = "Invalid login should show warning")
     public void testInvalidLogin() {
-        loginPage.navigateToLoginPage();
 
         loginPage.login("invalid@example.com", "wrongpassword");
 

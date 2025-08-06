@@ -8,9 +8,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ProductPage extends BasePage {
+
     private static final Logger logger = LoggerFactory.getLogger(ProductPage.class);
 
-    // Locators
+    // --- Locators ---
     private final String productLink = "//div[@class='product-thumb' and .//h4[a[normalize-space(text())='%s']]]//h4/a";
     private final By productTitle = By.xpath("//div[@id='content']//h1");
     private final By productPrice = By.xpath("//ul[contains(@class, 'list-unstyled')]//h2[contains(text(), '$')]");
@@ -21,35 +22,50 @@ public class ProductPage extends BasePage {
     private final By brand = By.xpath("//li[contains(text(), 'Brand') or contains(text(), 'Brands')]");
     private final By taxInfo = By.xpath("//li[contains(text(), 'Ex Tax:')]");
 
-    // Cart related
+    // --- Cart ---
     private final By addToCartButton = By.id("button-cart");
     private final By successAlert = By.cssSelector(".alert.alert-success");
     private final By errorAlert = By.cssSelector(".alert.alert-danger");
 
-    // Product options (dropdowns, radio buttons, etc.)
+    // --- Options ---
     private final By requiredOptionDropdown = By.cssSelector("select[required]");
-    private final By colorDropdown = By.cssSelector("select[name*='option']");
-    private final By optionError = By.xpath("//div[@class='text-danger' and contains(text(), 'Select required!')]");
+    private final By optionDropdown = By.cssSelector("select[name*='option']");
+    private final By optionError = By.xpath("//div[@class='text-danger' and contains(text(), 'Size required!')]");
+    private final By quantityInput = By.xpath("//input[@type='text' and contains(@id, 'input-quantity')]");
 
-    // Review section
+    // --- Review ---
     private final By reviewTab = By.xpath("//a[@href='#tab-review']");
     private final By reviewNameInput = By.cssSelector("#input-name");
-    private final By reviewTextInput = By.cssSelector("#input-review");;
+    private final By reviewTextInput = By.cssSelector("#input-review");
     private final By reviewSubmitButton = By.cssSelector("#button-review");
 
-    // Description tab
+    // --- Description tab ---
     private final By descriptionTab = By.xpath("//a[@href='#tab-description']");
 
+    /**
+     * Constructor
+     */
     public ProductPage() {
         super();
+        logger.info("✅ ProductPage instance created");
     }
 
-    /*---------Navigation---------*/
+    // ========================
+    // 🔹 Navigation
+    // ========================
+
+    /**
+     * Navigate to product from listing page
+     */
     public void navigateToProduct(String productName) {
+        logger.info("🧭 Navigating to product: {}", productName);
         click(By.xpath(String.format(productLink, productName)));
     }
 
-    /*---------Product Information---------*/
+    // ========================
+    // 🔹 Product Information
+    // ========================
+
     public String getProductTitle() {
         return getText(productTitle);
     }
@@ -62,6 +78,7 @@ public class ProductPage extends BasePage {
         try {
             return getText(taxInfo);
         } catch (Exception e) {
+            logger.warn("No tax info found");
             return "No tax info available";
         }
     }
@@ -85,19 +102,34 @@ public class ProductPage extends BasePage {
     public String getBrand() {
         try {
             String brandText = getText(brand);
-            // Extract brand name from "Brands Apple" format
             if (brandText.contains("Brands ")) {
                 return brandText.substring(brandText.indexOf("Brands ") + 7);
             }
             return brandText;
         } catch (Exception e) {
+            logger.warn("Brand not found");
             return "Brand not found";
         }
     }
 
-    /*---------Cart Operations---------*/
+    // ========================
+    // 🔹 Cart Operations
+    // ========================
+
+    /**
+     * Clicks the "Add to Cart" button
+     */
     public void clickAddToCart() {
+        logger.info("🛒 Clicking Add to Cart");
         click(addToCartButton);
+    }
+
+    /**
+     * Sets quantity before adding to cart
+     */
+    public void setQuantity(int quantity) {
+        logger.debug("Setting product quantity: {}", quantity);
+        type(quantityInput, String.valueOf(quantity));
     }
 
     public String getSuccessMessage() {
@@ -119,31 +151,27 @@ public class ProductPage extends BasePage {
     }
 
     public boolean isSuccessAlertDisplayed() {
-        try {
-            return isElementDisplayed(successAlert);
-        } catch (Exception e) {
-            return false;
-        }
+        return isElementDisplayed(successAlert);
     }
 
     public boolean isErrorAlertDisplayed() {
-        try {
-            return isElementDisplayed(errorAlert);
-        } catch (Exception e) {
-            return false;
-        }
+        return isElementDisplayed(errorAlert);
     }
 
-    /*---------Product Options---------*/
+    // ========================
+    // 🔹 Product Options
+    // ========================
+
     public boolean hasRequiredOptions() {
         return isElementPresent(requiredOptionDropdown);
     }
 
-    public void selectColorOption(String color) {
-        if (isElementPresent(colorDropdown)) {
-            WebElement dropdown = wait.get().waitForVisibility(colorDropdown);
+    public void selectSizeOption(String size) {
+        if (isElementPresent(optionDropdown)) {
+            WebElement dropdown = wait.get().waitForVisibility(optionDropdown);
             Select select = new Select(dropdown);
-            select.selectByVisibleText(color);
+            logger.info("🔽 Selecting size option: {}", size);
+            select.selectByValue(String.valueOf(size.equalsIgnoreCase("medium") ? 13 : 14));
         }
     }
 
@@ -159,16 +187,19 @@ public class ProductPage extends BasePage {
         }
     }
 
-    /*---------Review Section---------*/
+    // ========================
+    // 🔹 Review Section
+    // ========================
+
     public void clickReviewTab() {
+        logger.info("📝 Opening review tab");
         click(reviewTab);
     }
 
     public void fillReviewForm(String name, String reviewText, String rating) {
-        if (!name.isEmpty()) {
-            type(reviewNameInput, name);
-        }
+        logger.info("📝 Filling review: Name={}, Rating={}", name, rating);
 
+        if (!name.isEmpty()) type(reviewNameInput, name);
         type(reviewTextInput, reviewText);
 
         if (!rating.isEmpty()) {
@@ -178,10 +209,14 @@ public class ProductPage extends BasePage {
     }
 
     public void submitReview() {
+        logger.info("📤 Submitting product review");
         click(reviewSubmitButton);
     }
 
-    /*---------UI Element Visibility---------*/
+    // ========================
+    // 🔹 UI Element Visibility
+    // ========================
+
     public boolean isAddToCartButtonDisplayed() {
         return isElementDisplayed(addToCartButton);
     }
@@ -193,24 +228,27 @@ public class ProductPage extends BasePage {
     public boolean isDescriptionTabFunctional() {
         try {
             click(descriptionTab);
-            // Check if tab content is visible
             By descriptionContent = By.id("tab-description");
             return isElementDisplayed(descriptionContent);
         } catch (Exception e) {
+            logger.warn("Description tab not functional");
             return false;
         }
     }
 
-    /*---------Page Load Validation---------*/
+    // ========================
+    // 🔹 Page Validation
+    // ========================
+
     public boolean isProductPageLoaded() {
         try {
             wait.get().waitForVisibility(productTitle);
             wait.get().waitForVisibility(productPrice);
+            logger.info("✅ Product page successfully loaded");
             return true;
         } catch (Exception e) {
-            logger.error("Product page failed to load properly", e);
+            logger.error("❌ Product page failed to load", e);
             return false;
         }
     }
-
 }

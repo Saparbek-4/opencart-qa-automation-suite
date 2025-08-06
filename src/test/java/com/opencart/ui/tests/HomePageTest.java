@@ -1,6 +1,9 @@
 package com.opencart.ui.tests;
 
 import com.opencart.ui.base.BaseTest;
+import com.opencart.ui.pages.LoginPage;
+import com.opencart.utils.UserPoolManager;
+import groovy.util.logging.Log;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import com.opencart.ui.pages.HomePage;
@@ -9,10 +12,22 @@ import com.opencart.utils.WaitUtils;
 public class HomePageTest extends BaseTest {
 
     private HomePage homePage;
+    private LoginPage loginPage;
 
     @Override
     public void setupTestData() {
         homePage = new HomePage();
+        loginPage = new LoginPage();
+
+        loginPage.navigateToLoginPage();
+        new WaitUtils().waitForPageLoad();
+
+        String email = UserPoolManager.acquireUser();
+        String password = getProp().getProperty("testUserPassword");
+
+        loginPage.login(email, password);
+
+        homePage.navigateToHomePage();
         new WaitUtils().waitForPageLoad();
     }
 

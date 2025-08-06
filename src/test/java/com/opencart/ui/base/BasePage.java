@@ -23,6 +23,7 @@ public class BasePage {
         int attempts = 0;
         Exception lastException = null;
 
+        logger.info("🖱️ Attempting click on element: {}", locator);
         while (attempts < 3) {
             try {
                 WebElement element = wait.get().waitForElementToBeClickable(locator);
@@ -34,14 +35,14 @@ public class BasePage {
 
                 if (element.isEnabled() && element.isDisplayed()) {
                     element.click();
-
                     Thread.sleep(500);
+                    logger.info("✅ Standard click successful: {}", locator);
                     return;
                 }
 
             } catch (Exception e) {
                 lastException = e;
-                logger.warn("Click attempt {} failed for locator {}: {}", attempts + 1, locator, e.getMessage());
+                logger.warn("⚠️ Click attempt {} failed for locator {}: {}", attempts + 1, locator, e.getMessage());
                 sleep(1000);
             }
             attempts++;
@@ -55,7 +56,7 @@ public class BasePage {
             Thread.sleep(500);
             logger.info("JavaScript click successful for locator: {}", locator);
         } catch (Exception jsEx) {
-            logger.error("All click attempts failed for locator: {}", locator, jsEx);
+            logger.error("❌ All click attempts failed for locator: {}", locator, jsEx);
             throw new RuntimeException("Click failed after retries and JS fallback: " + locator, lastException);
         }
     }
@@ -65,43 +66,50 @@ public class BasePage {
             Thread.sleep(millis);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new RuntimeException("Thread was interrupted", e);
+            logger.error("🛑 Sleep interrupted", e);
         }
     }
 
-
     public void type(By locator, String text) {
+        logger.info("⌨️ Typing '{}' into {}", text, locator);
         clear(locator);
         wait.get().waitForVisibility(locator).sendKeys(text);
     }
 
     public void clear(By locator) {
+        logger.debug("🧽 Clearing text from {}", locator);
         WebElement webElement = wait.get().waitForVisibility(locator);
         webElement.clear();
     }
 
     public String getText(By locator) {
-        return wait.get().waitForVisibility(locator).getText();
+        String text = wait.get().waitForVisibility(locator).getText();
+        logger.debug("📄 Text of {}: '{}'", locator, text);
+        return text;
     }
 
     public String getAttribute(By locator, String attribute) {
-        return wait.get().waitForVisibility(locator).getAttribute(attribute);
+        String value = wait.get().waitForVisibility(locator).getAttribute(attribute);
+        logger.debug("🔍 Attribute '{}' of {}: '{}'", attribute, locator, value);
+        return value;
     }
 
     public String getCurrentUrl() {
-        return driver.get().getCurrentUrl();
+        String url = driver.get().getCurrentUrl();
+        logger.debug("🌐 Current URL: {}", url);
+        return url;
     }
 
     public boolean isElementDisplayed(By locator) {
-        return wait.get().waitForVisibility(locator).isDisplayed();
+        boolean visible = wait.get().waitForVisibility(locator).isDisplayed();
+        logger.debug("👁️ Element displayed {}: {}", locator, visible);
+        return visible;
     }
 
     public boolean isElementPresent(By locator) {
-        try {
-            return !driver.get().findElements(locator).isEmpty();
-        } catch (NoSuchElementException e) {
-            return false;
-        }
+        boolean present = !driver.get().findElements(locator).isEmpty();
+        logger.debug("📌 Element present {}: {}", locator, present);
+        return present;
     }
 
 }

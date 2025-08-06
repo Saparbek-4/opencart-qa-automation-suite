@@ -2,14 +2,15 @@ package com.opencart.ui.tests;
 
 import com.opencart.ui.base.BaseTest;
 import com.opencart.ui.models.WishlistSetupResult;
+import com.opencart.ui.pages.*;
+import com.opencart.utils.UserPoolManager;
+import com.opencart.utils.WaitUtils;
 import com.opencart.utils.WishListUtils;
+import groovy.util.logging.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import com.opencart.ui.pages.HomePage;
-import com.opencart.ui.pages.ProductPage;
-import com.opencart.ui.pages.WishlistPage;
 
 public class WishListTest extends BaseTest {
     private static final Logger logger = LoggerFactory.getLogger(WishListTest.class);
@@ -17,6 +18,9 @@ public class WishListTest extends BaseTest {
     private HomePage homePage;
     private ProductPage productPage;
     private WishlistPage wishlistPage;
+    private LoginPage loginPage;
+
+    // Test data
     private static final String PRODUCT_NAME = "iMac";
     private static final String EXPECTED_MODEL = "Product 14";
 
@@ -25,6 +29,15 @@ public class WishListTest extends BaseTest {
         homePage = new HomePage();
         productPage = new ProductPage();
         wishlistPage = new WishlistPage();
+        loginPage = new LoginPage();
+
+        loginPage.navigateToLoginPage();
+        new WaitUtils().waitForPageLoad();
+
+        String email = UserPoolManager.acquireUser();
+        String password = getProp().getProperty("testUserPassword");
+
+        loginPage.login(email, password);
     }
 
     @Test(description = "TC_WL_001: Add Product to Wish List from Product Page")
@@ -55,7 +68,7 @@ public class WishListTest extends BaseTest {
         wishlistPage.clickAddToCart(PRODUCT_NAME);
 
         String msg = wishlistPage.getSuccessMessage();
-        Assert.assertTrue(msg.contains("added to your shopping cart"), "Cart success message not shown");
+        Assert.assertTrue(msg.contains("added " + PRODUCT_NAME + " to your shopping cart"), "Cart success message not shown");
     }
 
     @Test(description = "TC_WL_004: Remove Product from Wish List")
@@ -102,7 +115,7 @@ public class WishListTest extends BaseTest {
     private void beforeEachWishlistTest(String product) {
         logger.debug("Preparing wishlist with only product: {}", product);
         WishlistSetupResult setupResult = WishListUtils
-                .prepareWishlistWithOnly(wishlistPage, homePage, productPage, product);
+                .prepareWishlistWithOnly(wishlistPage, homePage, product);
 
         assertWishlistSuccessMessage(setupResult.successMessage());
         Assert.assertTrue(setupResult.isInWishlist(), "Product should be in wish list");

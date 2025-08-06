@@ -1,15 +1,14 @@
 package com.opencart.ui.tests;
 
 import com.opencart.ui.base.BaseTest;
-import com.opencart.ui.pages.CartPage;
-import com.opencart.ui.pages.CheckoutPage;
+import com.opencart.ui.pages.*;
 import com.opencart.utils.DriverFactory;
+import com.opencart.utils.UserPoolManager;
 import org.openqa.selenium.By;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import com.opencart.ui.pages.HomePage;
 import com.opencart.utils.WaitUtils;
 
 import java.util.List;
@@ -18,30 +17,45 @@ public class CheckoutTest extends BaseTest {
     private static final Logger logger = LoggerFactory.getLogger(CheckoutTest.class);
     private CheckoutPage checkoutPage;
     private CartPage cartPage;
+    private ProductPage productPage;
+    private LoginPage loginPage;
+    private HomePage homePage;
+
+    // Test data
+    private static final String PRODUCT_NAME = "Product 8";
+    private static final String SIZE_OPTION = "MEDIUM";
+    private static final int QUANTITY = 1;
 
     @Override
     protected void setupTestData() {
         logger.info("Setting up checkout test data");
 
-        List<String> products = List.of("iMac", "HTC Touch HD", "iPod Nano");
-        String productName = products.get((int) (System.nanoTime() % products.size()));
-
-        HomePage homePage = new HomePage();
+        homePage = new HomePage();
         cartPage = new CartPage();
         checkoutPage = new CheckoutPage();
+        loginPage = new LoginPage();
 
-        homePage.searchProduct(productName);
-        homePage.addProductToCart(productName);
+        loginPage.navigateToLoginPage();
+        new WaitUtils().waitForPageLoad();
 
-        WaitUtils waitUtils = new WaitUtils();
-        waitUtils.waitForVisibility(By.cssSelector(".alert-success"));
+        String email = UserPoolManager.acquireUser();
+        String password = getProp().getProperty("testUserPassword");
+
+        loginPage.login(email, password);
+
+        homePage.searchProduct(PRODUCT_NAME);
+
+        productPage.navigateToProduct(PRODUCT_NAME);
+        productPage.selectSizeOption(SIZE_OPTION);
+        productPage.setQuantity(QUANTITY);
+        productPage.clickAddToCart();
 
         cartPage.navigateToCart();
 
-        Assert.assertTrue(cartPage.isProductInCart(productName),
+        Assert.assertTrue(cartPage.isProductInCart(PRODUCT_NAME),
                 "Product should be in the cart before proceeding to checkout");
 
-        DriverFactory.getDriver().get(getProp().getProperty("baseUrl") + "index.php?route=checkout/checkout");
+        checkoutPage.navigateToCheckoutPage();
         new WaitUtils().waitForPageLoad();
     }
 

@@ -13,7 +13,8 @@ public class CartTestUtils {
             HomePage homePage,
             ProductPage productPage,
             String product,
-            int quantity) {
+            int quantity,
+            String selectedSize) {
 
         cartPage.navigateToCart();
         List<String> currentProducts = cartPage.getAllProductNamesInCart();
@@ -25,20 +26,29 @@ public class CartTestUtils {
             cartPage.removeAllExcept(product);
         }
 
-        String successMsg = "";
-        boolean isInCart = false;
+        String successMsg;
+        boolean isInCart;
 
         if (!hasExpected) {
-            for (int i = 0; i < quantity; i++) {
-                homePage.searchProduct(product);
-                homePage.addProductToCart(product);
-                successMsg = productPage.getSuccessMessage();
-                cartPage.navigateToCart();
-            }
+            homePage.searchProduct(product);
+            productPage.navigateToProduct(product);
+            productPage.selectSizeOption(selectedSize);
+
+            productPage.setQuantity(quantity);
+            productPage.clickAddToCart();
+
+            successMsg = productPage.getSuccessMessage();
+            cartPage.navigateToCart();
             isInCart = cartPage.isProductInCart(product);
+            if (successMsg.isEmpty() && isInCart) {
+                successMsg = "Product added but no success message displayed.";
+            }
+
         } else {
             int currentQty = cartPage.getQuantity(product);
-            if (currentQty != quantity) {
+            if (currentQty == quantity) {
+                successMsg = "Product already in cart with desired quantity!";
+            } else {
                 cartPage.updateQuantity(product, quantity);
                 successMsg = cartPage.getSuccessMessage();
             }

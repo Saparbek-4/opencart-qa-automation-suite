@@ -16,10 +16,6 @@ public class WaitUtils {
             () -> new WebDriverWait(DriverFactory.getDriver(), Duration.ofSeconds(30))
     );
 
-    private ThreadLocal<WebDriverWait> shortWait = ThreadLocal.withInitial(
-            () -> new WebDriverWait(DriverFactory.getDriver(), Duration.ofSeconds(10))
-    );
-
     public WebElement waitForVisibility(By locator) {
         try {
             return wait.get().until(ExpectedConditions.visibilityOfElementLocated(locator));
@@ -58,14 +54,13 @@ public class WaitUtils {
             throw new TimeoutException("❌ Timeout waiting for document.readyState to be complete", e);
         }
 
-        // OPTIONAL: Wait for jQuery to be idle too
+        // Wait for jQuery to be idle
         try {
             wait.until(webDriver ->
                     (Boolean) ((JavascriptExecutor) webDriver)
                             .executeScript("return typeof jQuery !== 'undefined' && jQuery.active === 0")
             );
         } catch (Exception ignored) {
-            // jQuery might not be used; ignore if not present
         }
     }
 
@@ -81,36 +76,8 @@ public class WaitUtils {
         });
     }
 
-    // New method to wait for URL to contain specific text
     public void waitForUrlContains(String urlPart) {
         wait.get().until(ExpectedConditions.urlContains(urlPart));
     }
 
-    // New method to wait for URL to change
-    public void waitForUrlToChange(String currentUrl) {
-        wait.get().until(driver -> !driver.getCurrentUrl().equals(currentUrl));
-    }
-
-    // New method to wait for element to be present but not necessarily visible
-    public WebElement waitForPresence(By locator) {
-        return wait.get().until(ExpectedConditions.presenceOfElementLocated(locator));
-    }
-
-    // New method with shorter timeout for quick checks
-    public boolean waitForVisibilityWithTimeout(By locator, int timeoutSeconds) {
-        try {
-            WebDriverWait customWait = new WebDriverWait(DriverFactory.getDriver(), Duration.ofSeconds(timeoutSeconds));
-            customWait.until(ExpectedConditions.visibilityOfElementLocated(locator));
-            return true;
-        } catch (Exception e) {
-            logger.debug("Element not visible within {} seconds: {}", timeoutSeconds, locator);
-            return false;
-        }
-    }
-
-    // Clean up ThreadLocal on thread termination
-    public void cleanup() {
-        wait.remove();
-        shortWait.remove();
-    }
 }

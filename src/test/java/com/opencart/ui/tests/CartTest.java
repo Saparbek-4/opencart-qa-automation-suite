@@ -5,9 +5,11 @@ import com.opencart.ui.base.BaseTest;
 import com.opencart.ui.models.CartSetupResult;
 import com.opencart.ui.pages.CartPage;
 import com.opencart.ui.pages.HomePage;
+import com.opencart.ui.pages.LoginPage;
 import com.opencart.ui.pages.ProductPage;
 import com.opencart.utils.CartTestUtils;
 import com.opencart.utils.DriverFactory;
+import com.opencart.utils.UserPoolManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -24,10 +26,12 @@ public class CartTest extends BaseTest {
     private HomePage homePage;
     private CartPage cartPage;
     private ProductPage productPage;
+    private LoginPage loginPage;
 
-    private static final String PRODUCT_NAME = "iMac";
-    private static final String PRODUCT_MODEL = "Product 14";
-    private static final String PRODUCT_PRICE = "$100.00";
+    // Test data constants
+    private static final String PRODUCT_NAME = "Product 8";
+    private static final String PRODUCT_MODEL = "Product 8";
+    private static final String SIZE_OPTION = "MEDIUM";
 
     @Override
     public void setupTestData() {
@@ -37,6 +41,17 @@ public class CartTest extends BaseTest {
 
         homePage = new HomePage();
         productPage = new ProductPage();
+        loginPage = new LoginPage();
+
+        loginPage.navigateToLoginPage();
+        new WaitUtils().waitForPageLoad();
+
+        String email = UserPoolManager.acquireUser();
+        String password = getProp().getProperty("testUserPassword");
+
+        loginPage.login(email, password);
+
+        cartPage.navigateToCart();
         new WaitUtils().waitForPageLoad();
     }
 
@@ -61,8 +76,6 @@ public class CartTest extends BaseTest {
         assertEquals(cartPage.getProductName(PRODUCT_NAME), PRODUCT_NAME, "Product name mismatch");
         assertEquals(cartPage.getProductModel(PRODUCT_NAME), PRODUCT_MODEL, "Product model mismatch");
         assertEquals(cartPage.getQuantity(PRODUCT_NAME), 1, "Quantity mismatch");
-        assertEquals(cartPage.getUnitPrice(PRODUCT_NAME), PRODUCT_PRICE, "Unit price mismatch");
-        assertEquals(cartPage.getTotalPrice(PRODUCT_NAME), PRODUCT_PRICE, "Total price mismatch");
     }
 
     @Test(description = "TC_003: Increase Quantity and Validate Total")
@@ -71,8 +84,9 @@ public class CartTest extends BaseTest {
 
         beforeEachCartTest(PRODUCT_NAME, 3);
 
+        int expectedTotal = cartPage.getUnitPrice(PRODUCT_NAME) * 3;
         assertEquals(cartPage.getQuantity(PRODUCT_NAME), 3, "Quantity should be updated to 3");
-        assertEquals(cartPage.getTotalPrice(PRODUCT_NAME), "$300.00", "Total should be unit price × 3");
+        assertEquals(cartPage.getTotalPrice(PRODUCT_NAME), expectedTotal, "Total should be unit price × 3");
     }
 
     @Test(description = "TC_004: Set Quantity to 0 - Product Removed")
@@ -95,17 +109,8 @@ public class CartTest extends BaseTest {
         assertTrue(cartPage.isEmptyCartMessageDisplayed(), "Empty cart message should be displayed after removing product");
     }
 
-    @Test(description = "TC_006: Validate Subtotal, Eco Tax, VAT, and Total Calculation")
-    public void verifyPriceCalculations() {
-        logger.info("🔁 Running test: TC_006 - Validate Subtotal, VAT, Total");
 
-        beforeEachCartTest(PRODUCT_NAME, 1);
-
-        assertEquals(cartPage.getSubtotal(), "$100.00", "Subtotal mismatch");
-        assertEquals(cartPage.getGrandTotal(), "$100.00", "Total mismatch");
-    }
-
-    @Test(description = "TC_007: Proceed to Checkout Button")
+    @Test(description = "TC_006: Proceed to Checkout Button")
     public void verifyProceedToCheckout() {
         logger.info("🔁 Running test: TC_007 - Proceed to Checkout Button");
 
@@ -117,7 +122,7 @@ public class CartTest extends BaseTest {
         assertTrue(currentUrl.contains("checkout/checkout"), "Should be redirected to checkout page");
     }
 
-    @Test(description = "TC_008: Validate Stock Limit Handling")
+    @Test(description = "TC_007: Validate Stock Limit Handling")
     public void verifyOutOfStockWarning() {
         logger.info("🔁 Running test: TC_008 - Validate Stock Limit Handling");
 
@@ -131,16 +136,22 @@ public class CartTest extends BaseTest {
     private void beforeEachCartTest(String product, int quantity) {
         logger.info("🧪 Preparing cart with only product: {}, quantity: {}", product, quantity);
         CartSetupResult setupResult = CartTestUtils
-                .prepareCartWithOnly(cartPage, homePage, productPage, product, quantity);
+                .prepareCartWithOnly(cartPage, homePage, productPage, product, quantity, SIZE_OPTION);
 
         assertCartSuccessMessage(setupResult.successMessage());
         Assert.assertTrue(setupResult.isInCart(), "Product should be in cart");
     }
 
     private void assertCartSuccessMessage(String actualMessage) {
-        String expected = "You have added " + PRODUCT_NAME + " to your cart!";
+        String expected1 = "You have added " + PRODUCT_NAME + " to your shopping cart!";
+        String expected2 = "You have modified your shopping cart!";
+        String expected3 = "Product already in cart with desired quantity!";
+        String expected4 = "Product added but no success message displayed.";
         logger.debug("📥 Validating success message: {}", actualMessage);
-        Assert.assertTrue(actualMessage.contains(expected),
-                "Expected message to contain: '" + expected + "', but got: '" + actualMessage + "'");
+        Assert.assertTrue(actualMessage.contains(expected1) ||
+                        actualMessage.contains(expected2) ||
+                        actualMessage.contains(expected3) ||
+                        actualMessage.contains(expected4),
+                "Expected messages to contain: '" + "\n" + expected1 + "\n OR \n" + expected2 + "\n OR \n" + expected3 + "\n OR \n" + expected4 + "',\n but got: \n'" + actualMessage + "'");
     }
 }

@@ -1,6 +1,8 @@
 package com.opencart.ui.pages;
 
 import com.opencart.ui.base.BasePage;
+import com.opencart.utils.ConfigReader;
+import com.opencart.utils.DriverFactory;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.Select;
 import java.util.ArrayList;
@@ -11,27 +13,32 @@ import org.slf4j.LoggerFactory;
 public class CheckoutPage extends BasePage {
     private static final Logger logger = LoggerFactory.getLogger(CheckoutPage.class);
 
-    // Step 2: Billing Details Locators
+
+    // Locators for all checkout steps and fields (step 2 to step 6)
     private final By step2Header = By.xpath("//h4[contains(text(), 'Step 2: Billing Details')]");
     private final By step2Accordion = By.id("collapse-payment-address");
     private final By useExistingAddressRadio = By.xpath("//input[@name='payment_address'][@value='existing']");
     private final By useNewPaymentAddressRadio = By.xpath("//input[@name='payment_address'][@value='new']");
     private final By useNewShippingAddressRadio = By.xpath("//input[@name='shipping_address'][@value='new']");
-    // Validation error messages
+
+    // Validation messages
     private final By firstNameError = By.xpath("//input[@id='input-payment-firstname']/following-sibling::div[@class='text-danger']");
     private final By lastNameError = By.xpath("//input[@id='input-payment-lastname']/following-sibling::div[@class='text-danger']");
     private final By address1Error = By.xpath("//input[@id='input-payment-address-1']/following-sibling::div[@class='text-danger']");
     private final By cityError = By.xpath("//input[@id='input-payment-city']/following-sibling::div[@class='text-danger']");
 
+    // Step 3 Delivery Details
     private final By step3Header = By.xpath("//h4[contains(text(), 'Step 3: Delivery Details')]");
     private final By step3Accordion = By.id("collapse-shipping-address");
 
+    // Step 4 Delivery Method
     private final By step4Header = By.xpath("//h4[contains(text(), 'Step 4: Delivery Method')]");
     private final By step4Accordion = By.id("collapse-shipping-method");
     private final By flatRateOption = By.xpath("//input[@value='flat.flat']");
     private final By deliveryCommentsTextarea = By.xpath("//textarea[@name='comment']");
     private final By deliveryContinueButton = By.id("button-shipping-method");
 
+    // Step 5 Payment Method
     private final By step5Header = By.xpath("//h4[contains(text(), 'Step 5: Payment Method')]");
     private final By step5Accordion = By.id("collapse-payment-method");
     private final By bankTransferOption = By.xpath("//input[@value='bank_transfer']");
@@ -40,6 +47,7 @@ public class CheckoutPage extends BasePage {
     private final By paymentContinueButton = By.id("button-payment-method");
     private final By termsError = By.xpath("//div[contains(@class, 'alert-danger') and contains(text(), 'Terms')]");
 
+    // Step 6 Confirm Order
     private final By step6Header = By.xpath("//h4[contains(text(), 'Step 6: Confirm Order')]");
     private final By step6Accordion = By.id("collapse-checkout-confirm");
     private final By confirmOrderButton = By.id("button-confirm");
@@ -53,24 +61,26 @@ public class CheckoutPage extends BasePage {
         logger.info("CheckoutPage initialized");
     }
 
+
+    /**
+     * Dynamically generates input locator by type (payment/shipping) and field name.
+     */
     private By inputLocator(String type, String field) {
         return By.id(String.format("input-%s-%s", type, field));
     }
 
-    private By continueLocator(String step) {
-        switch (step.toLowerCase()) {
-            case "payment": return By.id("button-payment-address");
-            case "payment-method": return By.id("button-payment-method");
-            case "shipping-address": return By.id("button-shipping-address");
-            case "shipping-method": return By.id("button-shipping-method");
-            default:
-                logger.error("Unsupported step: {}", step);
-                throw new IllegalArgumentException("Unsupported step: " + step);
-        }
+    /**
+     * Navigate to Checkout page
+     */
+    public void navigateToCheckoutPage() {
+        DriverFactory.getDriver().navigate().to(ConfigReader.getProperty("baseUrl") + "index.php?route=checkout/checkout");
     }
 
+    /**
+     * Expand the Billing/Delivery Details section if not already open
+     */
     public void expandBillingDetails() {
-        logger.info("Attempting to expand billing details");
+        logger.info("[Step 2 - Billing] Attempting to expand billing details");
         if (!isElementDisplayed(step2Accordion)) {
             logger.info("Billing details not expanded, clicking header");
             click(step2Header);
@@ -80,7 +90,7 @@ public class CheckoutPage extends BasePage {
     }
 
     public void expandDeliveryDetails() {
-        logger.debug("Attempting to expand delivery details");
+        logger.debug("[Step 3 - Billing] Attempting to expand delivery details");
         if (!isElementDisplayed(step3Accordion)) {
             logger.debug("Delivery details not expanded, clicking header");
             click(step3Header);
@@ -89,21 +99,34 @@ public class CheckoutPage extends BasePage {
         }
     }
 
+    /**
+     * Select "New Address" radio button for Billing or Shipping
+     * @param type "payment" or "shipping"
+     */
     public void selectNewAddress(String type) {
         By locator = type.equals("payment") ? useNewPaymentAddressRadio : useNewShippingAddressRadio;
 
-        // Only click if radio is present (optional address mode)
         if (isElementPresent(locator)) {
-            logger.info("Selecting new {} address", type);
+            logger.info("✅ Selecting 'New {} Address' radio option", type);
             click(locator);
         } else {
-            logger.info("No {} address radio button found – assuming new address form is shown by default", type);
+            logger.info("ℹ️ No '{}' address radio button found – assuming new form shown by default", type);
         }
     }
 
+    /**
+     * Fill address fields for Billing or Shipping
+     * @param type "payment" or "shipping"
+     * @param firstName ...
+     * @param lastName ...
+     * @param address1 ...
+     * @param city ...
+     * @param country ...
+     * @param region ...
+     */
     public void fillAddressDetails(String type, String firstName, String lastName, String address1,
                                    String city, String country, String region) {
-        logger.info("Filling {} address details: FirstName={}, LastName={}, Address1={}, City={}, Country={}, Region={}",
+        logger.info("📝 Filling {} address details: FirstName={}, LastName={}, Address1={}, City={}, Country={}, Region={}",
                 type, firstName, lastName, address1, city, country, region);
 
         By firstNameInput = inputLocator(type, "firstname");
@@ -146,11 +169,34 @@ public class CheckoutPage extends BasePage {
         }
     }
 
+    /**
+     * Click continue button to proceed the next step
+     * @param type one of: "payment", "shipping-address", "payment-method", "shipping-method"
+     */
     public void clickContinue(String type) {
         logger.info("Clicking continue button for step: {}", type);
         click(continueLocator(type));
     }
 
+    /**
+     * Returns the Continue button locator based on the current step.
+     */
+    private By continueLocator(String step) {
+        return switch (step.toLowerCase()) {
+            case "payment" -> By.id("button-payment-address");
+            case "payment-method" -> By.id("button-payment-method");
+            case "shipping-address" -> By.id("button-shipping-address");
+            case "shipping-method" -> By.id("button-shipping-method");
+            default -> {
+                logger.error("Unsupported step: {}", step);
+                throw new IllegalArgumentException("Unsupported step: " + step);
+            }
+        };
+    }
+
+    /**
+     * Validations
+     */
     public List<String> getBillingValidationErrors() {
         logger.debug("Collecting billing validation errors");
         List<String> errors = new ArrayList<>();
@@ -192,94 +238,6 @@ public class CheckoutPage extends BasePage {
         return hasErrors;
     }
 
-    public boolean isStep3Visible() {
-        boolean isVisible = getCurrentUrl().contains("step=3") || isElementDisplayed(step3Accordion);
-        logger.debug("Checking if Step 3 is visible: {}", isVisible);
-        return isVisible;
-    }
-
-    public void selectFlatRateDelivery() {
-        logger.info("Selecting flat rate delivery option");
-        click(flatRateOption);
-    }
-
-    public void addDeliveryComments(String comments) {
-        logger.info("Adding delivery comments: {}", comments);
-        type(deliveryCommentsTextarea, comments);
-    }
-
-    public boolean isStep4Visible() {
-        boolean isVisible = getCurrentUrl().contains("step=4") || isElementDisplayed(step4Accordion);
-        logger.debug("Checking if Step 4 is visible: {}", isVisible);
-        return isVisible;
-    }
-
-    public void selectBankTransfer() {
-        logger.info("Selecting bank transfer payment method");
-        click(bankTransferOption);
-    }
-
-    public void selectCashOnDelivery() {
-        logger.info("Selecting cash on delivery payment method");
-        click(cashOnDeliveryOption);
-    }
-
-    public void acceptTerms() {
-        if (!wait.get().waitForVisibility(termsCheckbox).isSelected()) {
-            logger.info("Accepting terms and conditions");
-            click(termsCheckbox);
-        } else {
-            logger.debug("Terms and conditions already accepted");
-        }
-    }
-
-    public boolean isTermsErrorDisplayed() {
-        boolean isDisplayed = isElementPresent(termsError);
-        logger.debug("Checking if terms error is displayed: {}", isDisplayed);
-        return isDisplayed;
-    }
-
-    public String getTermsErrorMessage() {
-        String message = getText(termsError);
-        logger.warn("Terms error message: {}", message);
-        return message;
-    }
-
-    public boolean isStep5Visible() {
-        boolean isVisible = getCurrentUrl().contains("step=5") || isElementDisplayed(step5Accordion);
-        logger.debug("Checking if Step 5 is visible: {}", isVisible);
-        return isVisible;
-    }
-
-    public void clickConfirmOrder() {
-        logger.info("Clicking confirm order button");
-        click(confirmOrderButton);
-    }
-
-    public boolean isStep6Visible() {
-        boolean isVisible = getCurrentUrl().contains("step=6") || isElementDisplayed(step6Accordion);
-        logger.debug("Checking if Step 6 is visible: {}", isVisible);
-        return isVisible;
-    }
-
-    public String getOrderTotal() {
-        String total = getText(orderTotal);
-        logger.debug("Order total: {}", total);
-        return total;
-    }
-
-    public String getOrderSubtotal() {
-        String subtotal = getText(orderSubtotal);
-        logger.debug("Order subtotal: {}", subtotal);
-        return subtotal;
-    }
-
-    public String getShippingCost() {
-        String shipping = getText(shippingCost);
-        logger.debug("Shipping cost: {}", shipping);
-        return shipping;
-    }
-
     public boolean validateTotalCalculation() {
         logger.info("Validating order total calculation");
 
@@ -304,6 +262,91 @@ public class CheckoutPage extends BasePage {
         }
     }
 
+    /**
+     * Visibility of steps
+     */
+    public boolean isStep3Visible() {
+        boolean isVisible = getCurrentUrl().contains("step=3") || isElementDisplayed(step3Accordion);
+        logger.debug("Checking if Step 3 is visible: {}", isVisible);
+        return isVisible;
+    }
+
+    public boolean isStep4Visible() {
+        boolean isVisible = getCurrentUrl().contains("step=4") || isElementDisplayed(step4Accordion);
+        logger.debug("Checking if Step 4 is visible: {}", isVisible);
+        return isVisible;
+    }
+
+    public boolean isStep5Visible() {
+        boolean isVisible = getCurrentUrl().contains("step=5") || isElementDisplayed(step5Accordion);
+        logger.debug("Checking if Step 5 is visible: {}", isVisible);
+        return isVisible;
+    }
+
+    public boolean isStep6Visible() {
+        boolean isVisible = getCurrentUrl().contains("step=6") || isElementDisplayed(step6Accordion);
+        logger.debug("Checking if Step 6 is visible: {}", isVisible);
+        return isVisible;
+    }
+
+
+    /**
+     * Select methods
+     */
+    public void selectFlatRateDelivery() {
+        logger.info("Selecting flat rate delivery option");
+        click(flatRateOption);
+    }
+
+    public void selectBankTransfer() {
+        logger.info("Selecting bank transfer payment method");
+        click(bankTransferOption);
+    }
+
+    public void acceptTerms() {
+        if (!wait.get().waitForVisibility(termsCheckbox).isSelected()) {
+            logger.info("Accepting terms and conditions");
+            click(termsCheckbox);
+        } else {
+            logger.debug("Terms and conditions already accepted");
+        }
+    }
+
+    public void selectCashOnDelivery() {
+        logger.info("Selecting cash on delivery payment method");
+        click(cashOnDeliveryOption);
+    }
+
+    /**
+     * Add comment to delivery
+     */
+    public void addDeliveryComments(String comments) {
+        logger.info("Adding delivery comments: {}", comments);
+        type(deliveryCommentsTextarea, comments);
+    }
+
+
+    /**
+     * Display methods
+     */
+
+    public boolean isTermsErrorDisplayed() {
+        boolean isDisplayed = isElementPresent(termsError);
+        logger.debug("Checking if terms error is displayed: {}", isDisplayed);
+        return isDisplayed;
+    }
+
+
+    /**
+     * Get success/error messages
+     */
+
+    public String getTermsErrorMessage() {
+        String message = getText(termsError);
+        logger.warn("Terms error message: {}", message);
+        return message;
+    }
+
     public boolean isOrderSuccessful() {
         boolean isSuccessful = isElementDisplayed(successMessage);
         logger.info("Checking if order was successful: {}", isSuccessful);
@@ -316,8 +359,38 @@ public class CheckoutPage extends BasePage {
         return message;
     }
 
+    public void clickConfirmOrder() {
+        logger.info("Clicking confirm order button");
+        click(confirmOrderButton);
+    }
+
+
+    /**
+     * Order confirmation numbers
+     */
+    public String getOrderTotal() {
+        String total = getText(orderTotal);
+        logger.debug("Order total: {}", total);
+        return total;
+    }
+
+    public String getOrderSubtotal() {
+        String subtotal = getText(orderSubtotal);
+        logger.debug("Order subtotal: {}", subtotal);
+        return subtotal;
+    }
+
+    public String getShippingCost() {
+        String shipping = getText(shippingCost);
+        logger.debug("Shipping cost: {}", shipping);
+        return shipping;
+    }
+
+
+
     public boolean isNewAddressSelectionRequired(String type) {
         By locator = type.equals("payment") ? useNewPaymentAddressRadio : useNewShippingAddressRadio;
         return isElementPresent(locator);
     }
+
 }

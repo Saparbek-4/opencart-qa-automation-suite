@@ -18,12 +18,14 @@ public class DriverFactory {
 
     private static final Logger logger = LoggerFactory.getLogger(DriverFactory.class);
     private static final ThreadLocal<WebDriver> tlDriver = new ThreadLocal<>();
-    private static final String GRID_URL = "http://localhost:4444/wd/hub";
+    private static final String GRID_URL = System.getenv("JENKINS_HOME") != null ?
+                                            "http://selenium-hub:4444/wd/hub" :
+                                            "http://localhost:4444/wd/hub";
 
     public static WebDriver initDriver(String browser) {
-        logger.info("Initializing WebDriver for browser: {}", browser);
+        logger.info("🚀 Initializing WebDriver for browser: {}", browser);
 
-//        String runMode = System.getProperty("mode", "local"); // local or grid
+//        String runMode = System.getProperty("mode", System.getenv("JENKINS_HOME") != null ? "grid" : "local");
         String runMode = "grid";
         boolean isRemote = runMode.equalsIgnoreCase("grid");
 

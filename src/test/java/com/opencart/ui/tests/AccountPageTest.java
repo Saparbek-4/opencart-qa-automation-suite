@@ -2,6 +2,9 @@ package com.opencart.ui.tests;
 
 import com.opencart.ui.base.BaseTest;
 import com.opencart.ui.pages.AccountPage;
+import com.opencart.ui.pages.LoginPage;
+import com.opencart.utils.UserPoolManager;
+import com.opencart.utils.WaitUtils;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.slf4j.Logger;
@@ -11,12 +14,21 @@ public class AccountPageTest extends BaseTest {
 
     private static final Logger logger = LoggerFactory.getLogger(AccountPageTest.class);
     private AccountPage accountPage;
+    private LoginPage loginPage;
 
     @Override
     public void setupTestData() {
         logger.info("=== Setting up AccountPageTest ===");
+        loginPage = new LoginPage();
         accountPage = new AccountPage();
-        logger.info("AccountPage object initialized");
+
+        new LoginPage().navigateToLoginPage();
+        new WaitUtils().waitForPageLoad();
+
+        String email = UserPoolManager.acquireUser();
+        String password = getProp().getProperty("testUserPassword");
+
+        loginPage.login(email, password);
     }
 
     /**
@@ -29,10 +41,6 @@ public class AccountPageTest extends BaseTest {
         logger.info("🧪 Starting TC_001: My Account Page Loads Successfully");
 
         try {
-            // Step 1: Navigate to My Account page
-            logger.info("Step 1: Navigating to My Account page");
-            accountPage.navigateToAccountPage();
-
             // Check 1: Page heading is present
             logger.info("Check 1: Verifying page heading is present");
             Assert.assertTrue(accountPage.isMyAccountHeaderVisible(),
@@ -77,7 +85,6 @@ public class AccountPageTest extends BaseTest {
         try {
             // Navigate to My Account page
             logger.info("Navigating to My Account page");
-            accountPage.navigateToAccountPage();
 
             // Verify individual links
             logger.info("Checking individual account links:");
@@ -151,10 +158,6 @@ public class AccountPageTest extends BaseTest {
         logger.info("🧪 Starting TC_003: Navigate to Edit Account Page");
 
         try {
-            // Navigate to My Account page
-            logger.info("Navigating to My Account page");
-            accountPage.navigateToAccountPage();
-
             // Verify Edit Account link is visible before clicking
             logger.info("Verifying Edit Account link is visible");
             Assert.assertTrue(accountPage.isEditAccountLinkVisible(),
@@ -189,10 +192,6 @@ public class AccountPageTest extends BaseTest {
         logger.info("🧪 Starting TC_004: Navigate to Wish List");
 
         try {
-            // Navigate to My Account page
-            logger.info("Navigating to My Account page");
-            accountPage.navigateToAccountPage();
-
             // Verify Wish List link is visible before clicking
             logger.info("Verifying Wish List link is visible");
             Assert.assertTrue(accountPage.isWishListLinkVisible(),
@@ -225,10 +224,6 @@ public class AccountPageTest extends BaseTest {
         logger.info("🧪 Starting TC_005: Navigate to Order History");
 
         try {
-            // Navigate to My Account page
-            logger.info("Navigating to My Account page");
-            accountPage.navigateToAccountPage();
-
             // Verify Order History link is visible before clicking
             logger.info("Verifying Order History link is visible");
             Assert.assertTrue(accountPage.isOrderHistoryLinkVisible(),
@@ -268,10 +263,6 @@ public class AccountPageTest extends BaseTest {
         logger.info("🧪 Starting TC_006: Logout Functionality");
 
         try {
-            // Navigate to My Account page
-            logger.info("Navigating to My Account page");
-            accountPage.navigateToAccountPage();
-
             // Verify Logout link is visible before clicking
             logger.info("Verifying Logout link is visible");
             Assert.assertTrue(accountPage.isLogoutLinkVisible(),
@@ -280,7 +271,6 @@ public class AccountPageTest extends BaseTest {
             // Click Logout link
             logger.info("Clicking Logout link");
             accountPage.clickLogout();
-
 
             // Verify redirect to logout page
             logger.info("Verifying redirect to logout page");

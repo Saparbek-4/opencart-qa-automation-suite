@@ -11,6 +11,6 @@ import org.junit.runner.RunWith;
                 "com.opencart.api.hooks"},
         plugin = {"pretty", "html:target/cucumber-reports"},
         monochrome = true,
-        tags = "@checkout and @guest"
+        tags = "@account"
 )
 public class CucumberTestRunner {}

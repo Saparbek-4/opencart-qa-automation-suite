@@ -1,34 +1,44 @@
-name: UI Tests
+name: 🧪 Run UI Tests
 
 on:
+  workflow_dispatch:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    branches:
+      - master   # Or main
 
 jobs:
-  test:
+  ui-tests:
     runs-on: ubuntu-latest
 
     services:
-      xvfb:
-        image: selenium/standalone-chrome
+      selenium:
+        image: selenium/standalone-chrome:114.0
         ports:
           - 4444:4444
+        options: >-
+          --shm-size 2g
+          --name selenium-hub
+
+    env:
+      CHROME_OPTS: "--headless --no-sandbox --disable-dev-shm-usage"
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
 
-      - name: Set up JDK 21
+      - name: ☕ Set up Java 21
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
           distribution: 'temurin'
+          java-version: '21'
 
-      - name: Set Chrome options (Headless)
-        run: |
-          echo 'CHROME_OPTS=--headless --no-sandbox --disable-dev-shm-usage' >> $GITHUB_ENV
+      - name: 📦 Cache Maven Dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven
 
-      - name: Build and Run Tests with Maven
-        run: mvn clean test -DsuiteXmlFile=testng.xml
+      - name: 🧪 Run UI Tests with Maven
+        run: mvn clean test "-DsuiteXmlFile=testng.xml"

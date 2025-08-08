@@ -16,8 +16,7 @@ jobs:
         image: selenium/standalone-chrome:114.0
         ports:
           - 4444:4444
-        options: >-
-          --shm-size=2g
+        options: --shm-size=2g
 
     env:
       CHROME_OPTS: "--headless --no-sandbox --disable-dev-shm-usage"
@@ -41,10 +40,15 @@ jobs:
             ${{ runner.os }}-maven
 
       - name: 🧪 Run UI + API Tests (Full Suite)
-        run: mvn clean test "-DsuiteXmlFile=src/test/resources/testng/full-suite.xml"
+        run: mvn clean test -DsuiteXmlFile=src/test/resources/testng/full-suite.xml
+
+      - name: 🧾 Debug - Show Allure Results Structure
+        run: |
+          ls -la target
+          ls -la target/allure-results || true
 
       - name: 📊 Generate Allure Report
-        run: mvn io.qameta.allure:allure-maven:report "-Dallure.results.directory=target/allure-results"
+        run: mvn io.qameta.allure:allure-maven:report -Dallure.results.directory=target/allure-results
 
       - name: 📤 Upload Allure Results Folder
         uses: actions/upload-artifact@v4

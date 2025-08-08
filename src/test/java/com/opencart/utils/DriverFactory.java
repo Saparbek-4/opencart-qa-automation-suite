@@ -28,7 +28,8 @@ public class DriverFactory {
         logger.info("🚀 Initializing WebDriver for browser: {}", browser);
 
         // Determine whether to run on local or grid
-        String runMode = System.getProperty("mode", System.getenv("JENKINS_HOME") != null ? "grid" : "local");
+//        String runMode = System.getProperty("mode", System.getenv("JENKINS_HOME") != null ? "grid" : "local");
+        String runMode = "grid";
         boolean isRemote = runMode.equalsIgnoreCase("grid");
 
         try {

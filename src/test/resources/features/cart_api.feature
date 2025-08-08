@@ -1,23 +1,22 @@
-@cart @regression
 Feature: Shopping Cart API Functionality
 
   Background:
     Given I am logged in with a valid session
     And my cart is empty
 
-  @cart
+  @cart @api @regression
   Scenario: View an empty cart
     When I view the cart
     Then the response status code should be 200
     And the response should contain "Your shopping cart is empty!"
 
-  @cart
+  @cart @api @smoke
   Scenario: Add product to cart
     When I add product with ID 41 and quantity 1 to the cart
     Then the response status code should be 200
     And the response JSON should contain "Success: You have added"
 
-  @cart
+  @cart @api @regression
   Scenario: View cart with product
     Given the product with ID 41 and quantity 1 is in the cart
     When I view the cart
@@ -28,7 +27,7 @@ Feature: Shopping Cart API Functionality
     And the VAT should be "$20.00"
     And the total should be "$122.00"
 
-  @cart
+  @cart @api @regression
   Scenario: Update quantity of product in cart
     Given the product with ID 41 and quantity 1 is in the cart
     When I update product ID 41 to quantity 2
@@ -38,7 +37,7 @@ Feature: Shopping Cart API Functionality
     And the VAT should be "$40.00"
     And the total should be "$244.00"
 
-  @cart
+  @cart @api @regression
   Scenario: Remove product from cart
     Given the product with ID 41 and quantity 1 is in the cart
     When I remove the product with ID 41 from the cart

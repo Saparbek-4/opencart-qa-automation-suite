@@ -3,13 +3,13 @@ Feature: Account API Functionality (Authenticated)
   Background:
     Given I am logged in with a valid session
 
-  @account
+  @account @api @smoke
   Scenario: Verify My Account Page Loads
     When I send a GET request to "/index.php?route=account/account"
     Then the response status code should be 200
     And the response should contain "My Account"
 
-  @account
+  @account @api @regression
   Scenario: Verify All My Account Section Links Are Present
     When I send a GET request to "/index.php?route=account/account"
     Then the response should contain:
@@ -18,7 +18,7 @@ Feature: Account API Functionality (Authenticated)
       | Address Book       |
       | Wish List          |
 
-  @account
+  @account @api @regression
   Scenario: Verify All My Orders Section Links Are Present
     When I send a GET request to "/index.php?route=account/account"
     Then the response should contain:
@@ -29,13 +29,13 @@ Feature: Account API Functionality (Authenticated)
       | Transactions       |
       | Payment Profile    |
 
-  @account
+  @account @api @regression
   Scenario: Verify Newsletter Section Link Is Present
     When I send a GET request to "/index.php?route=account/account"
     Then the response should contain:
       | Newsletter         |
 
-  @account
+  @account @api @regression
   Scenario: Verify Sidebar Links Are Present
     When I send a GET request to "/index.php?route=account/account"
     Then the response should contain:
@@ -53,7 +53,7 @@ Feature: Account API Functionality (Authenticated)
       | Newsletter         |
       | Logout             |
 
-  @account
+  @account @api @regression
   Scenario: Navigate to Edit Account Page
     When I send a GET request to "/index.php?route=account/edit"
     Then the response status code should be 200
@@ -63,8 +63,7 @@ Feature: Account API Functionality (Authenticated)
       | E-Mail     |
       | Telephone  |
 
-  @account
+  @account @api @regression
   Scenario: Logout
     When I send a GET request to "/index.php?route=account/logout"
     Then the response status code should be 302
-

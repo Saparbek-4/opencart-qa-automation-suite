@@ -4,6 +4,8 @@ import com.opencart.ui.base.BaseTest;
 import com.opencart.ui.pages.*;
 import com.opencart.utils.DriverFactory;
 import com.opencart.utils.UserPoolManager;
+import io.qameta.allure.*;
+import io.qameta.allure.testng.Tag;
 import org.openqa.selenium.By;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +15,11 @@ import com.opencart.utils.WaitUtils;
 
 import java.util.List;
 
+@Epic("Checkout")
+@Feature("Multi-step Checkout Flow")
+@Owner("saparbek.kozhanazar04@gmail.com")
+//@Tag("regression")
+//@Tag("ui")
 public class CheckoutTest extends BaseTest {
     private static final Logger logger = LoggerFactory.getLogger(CheckoutTest.class);
     private CheckoutPage checkoutPage;
@@ -60,7 +67,10 @@ public class CheckoutTest extends BaseTest {
     }
 
 
-    @Test(priority = 1, description = "TC_001: Validate Billing Details Form Required Fields")
+    @Test(priority = 1, description = "TC_016: Validate Billing Details Form Required Fields")
+    @Story("User submits billing form without filling required fields")
+    @Severity(SeverityLevel.CRITICAL)
+    @TmsLink("TC-016")
     public void testBillingDetailsRequiredFieldsValidation() {
         logger.info("Starting testBillingDetailsRequiredFieldsValidation");
 
@@ -80,7 +90,10 @@ public class CheckoutTest extends BaseTest {
         validateErrorMessages(errors);
     }
 
-    @Test(priority = 2, description = "TC_002: Submit Valid Billing Address")
+    @Test(priority = 2, description = "TC_017: Submit Valid Billing Address")
+    @Story("User completes billing form")
+    @Severity(SeverityLevel.CRITICAL)
+    @TmsLink("TC-017")
     public void testSubmitValidBillingAddress() {
         logger.info("Starting testSubmitValidBillingAddress");
 
@@ -88,7 +101,10 @@ public class CheckoutTest extends BaseTest {
         Assert.assertTrue(checkoutPage.isStep3Visible(), "Should navigate to Step 3: Delivery Details");
     }
 
-    @Test(priority = 3, description = "TC_003: Validate Delivery Details Form")
+    @Test(priority = 3, description = "TC_018: Validate Delivery Details Form")
+    @Story("User submits delivery form without filling required fields")
+    @Severity(SeverityLevel.NORMAL)
+    @TmsLink("TC-018")
     public void testValidateDeliveryDetailsForm() {
         logger.info("Starting testValidateDeliveryDetailsForm");
 
@@ -101,7 +117,10 @@ public class CheckoutTest extends BaseTest {
                 "Should be on Step 3: Delivery Details");
     }
 
-    @Test(priority = 4, description = "TC_004: Submit Valid Delivery Address")
+    @Test(priority = 4, description = "TC_019: Submit Valid Delivery Address")
+    @Story("User completes delivery form")
+    @Severity(SeverityLevel.NORMAL)
+    @TmsLink("TC-019")
     public void testSubmitValidDeliveryAddress() {
         logger.info("Starting testSubmitValidDeliveryAddress");
 
@@ -112,7 +131,10 @@ public class CheckoutTest extends BaseTest {
                 "Should navigate to Step 4: Delivery Method");
     }
 
-    @Test(priority = 5, description = "TC_005: Select Delivery Method")
+    @Test(priority = 5, description = "TC_020: Select Delivery Method")
+    @Story("User selects delivery method")
+    @Severity(SeverityLevel.CRITICAL)
+    @TmsLink("TC-020")
     public void testSelectDeliveryMethod() {
         logger.info("Starting testSelectDeliveryMethod");
 
@@ -124,7 +146,10 @@ public class CheckoutTest extends BaseTest {
                 "Should navigate to Step 5: Payment Method");
     }
 
-    @Test(priority = 6, description = "TC_006: Verify Terms and Conditions Validation")
+    @Test(priority = 6, description = "TC_021: Verify Terms and Conditions Validation")
+    @Story("User accepts terms and conditions")
+    @Severity(SeverityLevel.CRITICAL)
+    @TmsLink("TC-021")
     public void testTermsAndConditionsValidation() {
         logger.info("Starting testTermsAndConditionsValidation");
 
@@ -144,7 +169,10 @@ public class CheckoutTest extends BaseTest {
                 "Error message should mention Terms & Conditions");
     }
 
-    @Test(priority = 7, description = "TC_007: Select Payment Method and Accept Terms")
+    @Test(priority = 7, description = "TC_022: Select Payment Method and Accept Terms")
+    @Story("User selects payment method and accepts terms")
+    @Severity(SeverityLevel.BLOCKER)
+    @TmsLink("TC-022")
     public void testSelectPaymentMethodAndAcceptTerms() {
         logger.info("Starting testSelectPaymentMethodAndAcceptTerms");
 
@@ -157,7 +185,10 @@ public class CheckoutTest extends BaseTest {
                 "Should navigate to Step 6: Confirm Order");
     }
 
-    @Test(priority = 8, description = "TC_007_COD: Select Cash On Delivery and Accept Terms")
+    @Test(priority = 8, description = "TC_023_COD: Select Cash On Delivery and Accept Terms")
+    @Story("User selects payment method as 'cod' and accepts terms")
+    @Severity(SeverityLevel.BLOCKER)
+    @TmsLink("TC-023")
     public void testSelectCashOnDeliveryAndAcceptTerms() {
         logger.info("Starting testSelectCashOnDeliveryAndAcceptTerms");
 
@@ -170,7 +201,10 @@ public class CheckoutTest extends BaseTest {
                 "Should navigate to Step 6: Confirm Order");
     }
 
-    @Test(priority = 9, description = "TC_008: Confirm Order")
+    @Test(priority = 9, description = "TC_024: Confirm Order")
+    @Story("User confirms order")
+    @Severity(SeverityLevel.BLOCKER)
+    @TmsLink("TC-024")
     public void testConfirmOrder() {
         logger.info("Starting testConfirmOrder");
 
@@ -193,7 +227,10 @@ public class CheckoutTest extends BaseTest {
                 "Success message should confirm order placement");
     }
 
-    @Test(priority = 10, description = "TC_009: Validate Final Amount (Subtotal + Shipping = Total)")
+    @Test(priority = 10, description = "TC_025: Validate Final Amount (Subtotal + Shipping = Total)")
+    @Story("User checks final amount before confirming order")
+    @Severity(SeverityLevel.NORMAL)
+    @TmsLink("TC-025")
     public void testValidateFinalAmount() {
         logger.info("Starting testValidateFinalAmount");
 
@@ -211,7 +248,10 @@ public class CheckoutTest extends BaseTest {
                 "Shipping cost should be $5.00 for Flat Rate");
     }
 
-    @Test(priority = 11, description = "TC_010: Post-Order Cart Clearance")
+    @Test(priority = 11, description = "TC_026: Post-Order Cart Clearance")
+    @Story("User checks cart page for clearance")
+    @Severity(SeverityLevel.MINOR)
+    @TmsLink("TC-026")
     public void testPostOrderCartClearance() {
         logger.info("Starting testPostOrderCartClearance");
 
@@ -223,6 +263,7 @@ public class CheckoutTest extends BaseTest {
         Assert.assertTrue(emptyText.contains("Your shopping cart is empty!"), "Cart is not empty");
     }
 
+    @Step("Validating error messages: {errors}")
     private void validateErrorMessages(List<String> errors) {
         logger.debug("Validating error messages");
         boolean hasFirstNameError = errors.stream().anyMatch(error ->
@@ -240,6 +281,7 @@ public class CheckoutTest extends BaseTest {
         Assert.assertTrue(hasCityError, "City validation error should be displayed");
     }
 
+    @Step("Completing billing details")
     private void completeBillingDetails() {
         logger.debug("Completing billing details");
         checkoutPage.expandBillingDetails();
@@ -250,17 +292,15 @@ public class CheckoutTest extends BaseTest {
         logger.info("Clicking continue on billing");
         checkoutPage.clickContinue("payment");
 
-        // ✅ Step 2: Wait until Step 2 collapses
         WaitUtils waitUtils = new WaitUtils();
         waitUtils.waitUntilInvisibilityOfElementLocated(By.id("collapse-payment-address"));
 
-        // ✅ Step 3: Wait until Step 3 appears
         waitUtils.waitForVisibility(By.id("collapse-shipping-address"));
 
-        // ✅ Optional: log confirmation
         logger.info("Step 3 (Delivery Details) is now visible");
     }
 
+    @Step("Filling address fields")
     private void fillAddressFields(String type) {
         logger.debug("Filling address fields for type: {}", type);
         checkoutPage.fillAddressDetails(
@@ -274,6 +314,7 @@ public class CheckoutTest extends BaseTest {
         );
     }
 
+    @Step("Completing delivery details")
     private void completeDeliveryDetails() {
         logger.debug("Completing delivery details");
         checkoutPage.expandDeliveryDetails();
@@ -283,7 +324,6 @@ public class CheckoutTest extends BaseTest {
         fillAddressFields("shipping");
         checkoutPage.clickContinue("shipping-address");
 
-        // Wait for Step 3 to collapse and Step 4 to appear
         WaitUtils waitUtils = new WaitUtils();
         waitUtils.waitUntilInvisibilityOfElementLocated(By.id("collapse-shipping-address"));
         waitUtils.waitForVisibility(By.id("collapse-shipping-method"));
@@ -291,13 +331,13 @@ public class CheckoutTest extends BaseTest {
         logger.info("Step 4 (Delivery Method) is now visible");
     }
 
+    @Step("Completing delivery method")
     private void completeDeliveryMethod() {
         logger.debug("Completing delivery method");
         checkoutPage.selectFlatRateDelivery();
         checkoutPage.addDeliveryComments("Please deliver between 9 AM - 5 PM");
         checkoutPage.clickContinue("shipping-method");
 
-        // Wait for Step 4 to collapse and Step 5 to appear
         WaitUtils waitUtils = new WaitUtils();
         waitUtils.waitUntilInvisibilityOfElementLocated(By.id("collapse-shipping-method"));
         waitUtils.waitForVisibility(By.id("collapse-payment-method"));
@@ -305,6 +345,7 @@ public class CheckoutTest extends BaseTest {
         logger.info("Step 5 (Payment Method) is now visible");
     }
 
+    @Step("Completing payment method")
     private void completePaymentMethod(String paymentType) {
         logger.debug("Completing payment method: {}", paymentType);
         if ("bank_transfer".equals(paymentType)) {
@@ -315,7 +356,6 @@ public class CheckoutTest extends BaseTest {
         checkoutPage.acceptTerms();
         checkoutPage.clickContinue("payment-method");
 
-        // Wait for Step 5 to collapse and Step 6 to appear
         WaitUtils waitUtils = new WaitUtils();
         waitUtils.waitUntilInvisibilityOfElementLocated(By.id("collapse-payment-method"));
         waitUtils.waitForVisibility(By.id("collapse-checkout-confirm"));

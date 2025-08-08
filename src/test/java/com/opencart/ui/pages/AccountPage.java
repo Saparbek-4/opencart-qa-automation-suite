@@ -12,7 +12,7 @@ public class AccountPage extends BasePage {
     private static final Logger logger = LoggerFactory.getLogger(AccountPage.class);
 
     // Page Elements
-    private By accountHeader = By.cssSelector("div#content h2");
+    private By accountHeader = By.linkText("My Account");
     private By rightSidebar = By.id("column-right");
     private By centralContent = By.cssSelector("div#content");
 

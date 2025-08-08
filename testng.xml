@@ -1,17 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 
+
 <suite name="OpenCart Specific Tests" parallel="methods" thread-count="2">
     <parameter name="browser" value="chrome"/>
-
-    <test name="All Tests">
-        <classes>
-            <class name="com.opencart.ui.tests.LoginTest"/>
+    <listeners>
+        <listener class-name="com.opencart.listeners.AllureListener"/>
+    </listeners>
+<!--    <test name="All UI Tests">-->
+<!--        <classes>-->
+<!--            <class name="com.opencart.ui.tests.LoginTest"/>-->
 <!--            <class name="com.opencart.ui.tests.HomePageTest"/>-->
 <!--            <class name="com.opencart.ui.tests.AccountPageTest"/>-->
 <!--            <class name="com.opencart.ui.tests.WishListTest"/>-->
 <!--            <class name="com.opencart.ui.tests.ProductPageTest"/>-->
 <!--            <class name="com.opencart.ui.tests.CartTest"/>-->
-        </classes>
-    </test>
+<!--        </classes>-->
+<!--    </test>-->
+<!--    <test name="All API Tests">-->
+<!--        <classes>-->
+<!--            <class name="com.opencart.api.runners.CucumberTestRunner"/>-->
+<!--        </classes>-->
+<!--    </test>-->
 </suite>

@@ -2,8 +2,11 @@ package com.opencart.api.stepdefinitions;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
+import io.qameta.allure.*;
+import io.qameta.allure.testng.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 public class CommonStepDefinitions extends BaseApiStepDefinitions {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());

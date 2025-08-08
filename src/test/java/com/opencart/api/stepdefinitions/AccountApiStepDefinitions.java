@@ -5,6 +5,8 @@ import com.opencart.utils.SessionManager;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import io.qameta.allure.*;
+import io.qameta.allure.testng.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

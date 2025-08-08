@@ -2,17 +2,20 @@ package com.opencart.ui.base;
 
 import com.opencart.ui.pages.AccountPage;
 import com.opencart.ui.pages.LoginPage;
-import com.opencart.ui.tests.AccountPageTest;
 import com.opencart.utils.*;
+import io.qameta.allure.Allure;
+import io.qameta.allure.Attachment;
+import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
-import com.opencart.ui.tests.LoginTest;
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testng.Assert;
 import org.testng.annotations.*;
 
+import java.io.ByteArrayInputStream;
 import java.text.SimpleDateFormat;
 import java.util.Properties;
 import org.apache.commons.io.FileUtils;
@@ -23,11 +26,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 
+import static org.apache.commons.lang3.exception.ExceptionUtils.getStackTrace;
+
 public class BaseTest {
 
     private static final Logger logger = LoggerFactory.getLogger(BaseTest.class);
     private AccountPage accountPage;
     private LoginPage loginPage;
+
 
     @BeforeMethod(alwaysRun = true)
     @Parameters({"browser"})
@@ -58,10 +64,6 @@ public class BaseTest {
         WebDriver driver = DriverFactory.getDriver();
 
         try {
-            if (result.getStatus() == ITestResult.FAILURE) {
-                takeScreenshotOnFailure(result);
-            }
-
             if (driver != null && isUserLoggedIn()) {
                 accountPage = new AccountPage();
                 accountPage.clickLogout();
@@ -82,6 +84,23 @@ public class BaseTest {
         }
     }
 
+    @Attachment(value = "📸 Screenshot", type = "image/png")
+    public byte[] attachScreenshot(byte[] screenshot) {
+        return screenshot;
+    }
+
+    @Attachment(value = "📄 Page Source", type = "text/html")
+    public String attachPageSource(String html) {
+        return html;
+    }
+
+    @Attachment(value = "{title}", type = "text/plain")
+    public String attachTextLog(String title, String message) {
+        return message;
+    }
+
+
+    @Step("Check if user is logged in based on URL and Logout link")
     protected boolean isUserLoggedIn() {
         try {
             WebDriver driver = DriverFactory.getDriver();
@@ -109,17 +128,4 @@ public class BaseTest {
         }
     }
 
-    private void takeScreenshotOnFailure(ITestResult result) {
-        if (result.getStatus() == ITestResult.FAILURE) {
-            try {
-                File srcFile = ((TakesScreenshot) DriverFactory.getDriver()).getScreenshotAs(OutputType.FILE);
-                String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-                File destFile = new File("screenshots/" + result.getName() + "_" + timestamp + ".png");
-                FileUtils.copyFile(srcFile, destFile);
-                logger.info("📸 Screenshot saved: {}", destFile.getAbsolutePath());
-            } catch (IOException e) {
-                logger.error("❌ Screenshot capture failed", e);
-            }
-        }
-    }
 }

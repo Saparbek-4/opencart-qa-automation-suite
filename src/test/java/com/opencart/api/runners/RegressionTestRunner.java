@@ -2,17 +2,14 @@ package com.opencart.api.runners;
 
 import io.cucumber.testng.AbstractTestNGCucumberTests;
 import io.cucumber.testng.CucumberOptions;
-import org.testng.annotations.DataProvider;
 
 @CucumberOptions(
+        tags = "@regression",
         features = "src/test/resources/features",
         glue = {"com.opencart.api.stepdefinitions", "com.opencart.api.hooks"},
-        plugin = {
-                "pretty",
-                "html:target/cucumber-reports",
-                "io.qameta.allure.cucumber7jvm.AllureCucumber7Jvm"
-        }
+        plugin = {"pretty", "io.qameta.allure.cucumber7jvm.AllureCucumber7Jvm"}
 )
-public class CucumberTestRunner extends AbstractTestNGCucumberTests {
-
+public class RegressionTestRunner extends AbstractTestNGCucumberTests {
 }
+
+

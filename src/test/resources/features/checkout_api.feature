@@ -4,7 +4,7 @@ Feature: Checkout API Functionality
   I want to complete the checkout process via API
   So that I can place an order without registering
 
-  @checkout @guest
+  @checkout @guest @api
   Scenario: Guest checkout with valid product and details
     Given I start a guest session
     And I add product with ID 41 and quantity 1 to the cart to proceed checkout
@@ -16,7 +16,7 @@ Feature: Checkout API Functionality
     And the order should be successfully placed
     And the response should contain "Your order has been successfully processed"
 
-  @checkout @auth
+  @checkout @auth @api @regression
   Scenario: Authenticated checkout with valid product and details
     Given I start authorized session
     And I add product with ID 41 and quantity 1 to the cart to proceed checkout

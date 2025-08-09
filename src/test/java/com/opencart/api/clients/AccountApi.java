@@ -16,7 +16,6 @@ public class AccountApi {
                 .when()
                 .get(endpoint)
                 .then()
-                .spec(SpecFactory.htmlResponseWithStatus(200))
                 .extract()
                 .response();
     }

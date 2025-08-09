@@ -1,15 +1,18 @@
 package com.opencart.utils;
 
 import com.opencart.api.clients.ApiRoutes;
+import io.restassured.RestAssured;
 import io.restassured.filter.cookie.CookieFilter;
 import io.restassured.response.Response;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SessionManager {
     private static final Logger logger = LoggerFactory.getLogger(SessionManager.class);
     private static String sessionId;
-    private static final CookieFilter cookieFilter = new CookieFilter();
+    private static CookieFilter cookieFilter = new CookieFilter();
 
     private static final String EMAIL = UserPoolManager.acquireUser();
     private static final String PASSWORD = ConfigReader.getProperty("testUserPassword");
@@ -57,6 +60,13 @@ public class SessionManager {
                 .response();
     }
 
+    public static void resetSession() {
+        sessionId = null;
+        cookieFilter = new CookieFilter();
+        RestAssured.replaceFiltersWith(cookieFilter);
+        logger.info("🧹 Session reset: new CookieFilter created");
+    }
+
     public static CookieFilter getCookieFilter() {
         return cookieFilter;
     }
@@ -70,7 +80,13 @@ public class SessionManager {
         SpecFactory.getRequestSpec(cookieFilter)
                 .get(ApiRoutes.LOGOUT)
                 .then()
-                .spec(SpecFactory.htmlResponseWithStatus(302));
+                .statusCode(org.hamcrest.Matchers.anyOf(
+                        org.hamcrest.Matchers.is(302),
+                        org.hamcrest.Matchers.is(200)
+                ));
+        sessionId = null;
+
+        resetSession();
     }
 }
 

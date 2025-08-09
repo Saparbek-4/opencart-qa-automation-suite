@@ -5,25 +5,29 @@ import com.opencart.utils.SessionManager;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.restassured.RestAssured;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class Hooks {
-
-    private static final Logger logger = LoggerFactory.getLogger(Hooks.class);
-
-    @Before("@account or @auth")
-    public void beforeScenario() {
-        logger.info("🔐 Initializing authenticated session for test scenario...");
+    @Before(order = 0)
+    public void baseSetup() {
         RestAssured.useRelaxedHTTPSValidation();
-        SessionManager.initLoggedSession(); // logs in and stores session
+        SessionManager.resetSession();
+    }
+
+    @Before(value = "@account or @auth", order = 1)
+    public void beforeAuth() {
+        SessionManager.initLoggedSession();
         new CartApi(SessionManager.getCookieFilter()).removeAllItems();
     }
 
-
-    @After("@account or @auth")
-    public void afterScenario() {
-        logger.info("🔚 Ending test scenario, clearing session...");
-        SessionManager.logout();
+    @Before(value = "@guest", order = 1)
+    public void beforeGuest() {
+        SessionManager.startGuestSession();
     }
+
+    @After(value = "@account or @auth")
+    public void afterAuth() {
+        if (SessionManager.isAuthenticated()) SessionManager.logout();
+    }
+
+
 }

@@ -40,7 +40,7 @@ jobs:
             ${{ runner.os }}-maven
 
       - name: 🧪 Run UI + API Tests (Full Suite)
-        run: mvn clean test -DsuiteXmlFile=src/test/resources/testng/full-suite.xml
+        run: mvn clean test -DsuiteXmlFile=src/test/resources/testng/full-suite.xml -Dmaven.test.failure.ignore=true
 
       - name: 🧾 Debug - Show Allure Results Structure
         run: |

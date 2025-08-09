@@ -34,7 +34,7 @@ jobs:
 
       - name: 🐳 Start Selenium Grid from docker-compose.yml
         run: |
-          docker-compose -f docker-compose.yml up -d
+          docker compose -f docker-compose.yml up -d
           echo "Waiting for Selenium Grid to be ready..."
           sleep 15
           docker ps
